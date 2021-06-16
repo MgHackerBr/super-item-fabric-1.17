@@ -39,7 +39,7 @@ public class ItemSuperItem extends Item
 
     public static final TranslatableText TITLE = new TranslatableText("item.super_item.super_item.enderchest");
 
-    // Player is invulnerable with item in offhand
+    // Player is invulnerable and Conduit Power while submerged with item in offhand
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
     {
@@ -59,6 +59,15 @@ public class ItemSuperItem extends Item
                 else
                 {
                     player.setInvulnerable(false);
+                }
+
+                if(inOffhand && player.isSubmergedInWater())
+                {
+                    StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.CONDUIT_POWER, 8, 0, false, false);
+
+                    {
+                        player.addStatusEffect(effect);
+                    }
                 }
 
             }
@@ -87,12 +96,12 @@ public class ItemSuperItem extends Item
             StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 3600, 0, false, false);
             {
                 player.addStatusEffect(effect);
+                player.sendMessage((new TranslatableText("item.super_item.super_item.status3")), true);
             }
         }
 
         // Offhand right-click opens Enderchest
         EnderChestInventory enderChest = player.getEnderChestInventory();
-
         if(!world.isClient && inOffhand && !player.isSneaking() && enderChest != null)
         {
 
@@ -101,6 +110,16 @@ public class ItemSuperItem extends Item
             }, TITLE));
 
         }
+
+        // Offhand sneak + right-click full absorption
+        if(!world.isClient && inOffhand && player.isSneaking())
+        {
+            player.setHealth(20);
+            player.getHungerManager().setFoodLevel(20);
+            player.setAbsorptionAmount(60);
+            player.sendMessage((new TranslatableText("item.super_item.super_item.status2")), true);
+        }
+
         return TypedActionResult.success(mainHand);
     }
 
@@ -182,8 +201,9 @@ public class ItemSuperItem extends Item
         tooltip.add(new TranslatableText("item.super_item.super_item.tip1").formatted(Formatting.YELLOW));
         tooltip.add(new TranslatableText("item.super_item.super_item.tip2").formatted(Formatting.GREEN));
         tooltip.add(new TranslatableText("item.super_item.super_item.tip3").formatted(Formatting.GREEN));
-        tooltip.add(new TranslatableText("item.super_item.super_item.tip4").formatted(Formatting.RED));
+        tooltip.add(new TranslatableText("item.super_item.super_item.tip4").formatted(Formatting.GREEN));
         tooltip.add(new TranslatableText("item.super_item.super_item.tip5").formatted(Formatting.RED));
-        tooltip.add(new TranslatableText("item.super_item.super_item.tip6").formatted(Formatting.BLUE));
+        tooltip.add(new TranslatableText("item.super_item.super_item.tip6").formatted(Formatting.RED));
+        tooltip.add(new TranslatableText("item.super_item.super_item.tip7").formatted(Formatting.BLUE));
     }
 }
