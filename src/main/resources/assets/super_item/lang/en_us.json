@@ -1,0 +1,12 @@
+{
+	"item.super_item.super_item": "The Super Item",
+
+	"item.super_item.super_item.tip1": "A very fine item indeed",
+	"item.super_item.super_item.tip2": "Offhand: You are invulnerable",
+	"item.super_item.super_item.tip3": "Offhand: Sneak + right-click to access Enderchest",
+	"item.super_item.super_item.tip4": "Mainhand: Right-click for full healing",
+	"item.super_item.super_item.tip5": "Mainhand: Sneak + right-click gives Nigh Vision",
+	"item.super_item.super_item.tip6": "Right click on a block to place a torch",
+	"item.super_item.super_item.status1": "You have been healed!!",
+	"item.super_item.super_item.enderchest": "Enderchest on the go"
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "super_item",
+  "version": "${version}",
+
+  "name": "The Super Item",
+  "description": "Provides the Super Item, which is useful in mod testing",
+  "authors": [
+    "kwpugh"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "CC0-1.0",
+  "icon": "assets/super_item/textures/item/super_item.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.kwpugh.super_item.SuperItem"
+    ]
+  },
+  "mixins": [
+    "super_item.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x",
+    "java": ">=16"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}

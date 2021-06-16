@@ -1,0 +1,32 @@
+{
+    "type": "minecraft:crafting_shaped",
+    
+    "pattern":
+    [
+        "BBC",
+        "BAC",
+        "BCC"
+    ],
+    
+    "key":
+    {
+        "A":
+        {
+            "item": "minecraft:iron_ingot"
+        },
+        "B":
+        {
+            "item": "minecraft:redstone"
+        },
+        "C":
+        {
+            "item": "minecraft:lapis_lazuli"
+        }
+    },
+    
+    "result":
+    {
+        "item": "ring_of_attraction:ring_of_attraction",
+        "count": 1
+    }
+}
