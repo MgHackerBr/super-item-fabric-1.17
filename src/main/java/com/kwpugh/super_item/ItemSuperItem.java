@@ -32,14 +32,22 @@ import net.minecraft.world.World;
 
 public class ItemSuperItem extends Item
 {
+    public static final TranslatableText TITLE = new TranslatableText("item.super_item.super_item.enderchest");
+
+    static boolean enableInvulnerable = SuperItem.CONFIG.GENERAL.enableInvulnerable;
+    static boolean enableConduitPower = SuperItem.CONFIG.GENERAL.enableConduitPower;
+    static boolean enableEnderchest = SuperItem.CONFIG.GENERAL.enableEnderchest;
+    static boolean enableTorchPlacing = SuperItem.CONFIG.GENERAL.enableTorchPlacing;
+    static boolean enableHealthRestore = SuperItem.CONFIG.GENERAL.enableHealthRestore;
+    static boolean enableNightVision = SuperItem.CONFIG.GENERAL.enableNightVision;
+    static boolean enableAbsorptionHearts = SuperItem.CONFIG.GENERAL.enableAbsorptionHearts;
+
     public ItemSuperItem(Settings settings)
     {
         super(settings);
     }
 
-    public static final TranslatableText TITLE = new TranslatableText("item.super_item.super_item.enderchest");
-
-    // Player is invulnerable and Conduit Power while submerged with item in offhand
+    // Player is invulnerable and gets Conduit Power while submerged with item in offhand
     @Override
     public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected)
     {
@@ -52,7 +60,7 @@ public class ItemSuperItem extends Item
                 Boolean inMainhand = player.getMainHandStack().getItem()== SuperItem.SUPER_ITEM;
                 Boolean inOffhand = player.getOffHandStack().getItem() == SuperItem.SUPER_ITEM;
 
-                if(inOffhand)
+                if(enableInvulnerable && inOffhand)
                 {
                     player.setInvulnerable(true);
                 }
@@ -61,7 +69,7 @@ public class ItemSuperItem extends Item
                     player.setInvulnerable(false);
                 }
 
-                if(inOffhand && player.isSubmergedInWater())
+                if(enableConduitPower && player.isSubmergedInWater() && inOffhand)
                 {
                     StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.CONDUIT_POWER, 8, 0, false, false);
 
@@ -69,7 +77,6 @@ public class ItemSuperItem extends Item
                         player.addStatusEffect(effect);
                     }
                 }
-
             }
         }
     }
@@ -83,41 +90,67 @@ public class ItemSuperItem extends Item
         Boolean inMainhand = player.getMainHandStack().getItem()== SuperItem.SUPER_ITEM;
         Boolean inOffhand = player.getOffHandStack().getItem() == SuperItem.SUPER_ITEM;
 
-
-        if(!world.isClient && inMainhand && !player.isSneaking())
+        if(!world.isClient && inMainhand)
         {
-            player.setHealth(20);
-            player.getHungerManager().setFoodLevel(20);
-            player.sendMessage((new TranslatableText("item.super_item.super_item.status1")), true);
-        }
-
-        if(!world.isClient && inMainhand && player.isSneaking())
-        {
-            StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 3600, 0, false, false);
+            if(!player.isSneaking() && enableHealthRestore)
             {
-                player.addStatusEffect(effect);
-                player.sendMessage((new TranslatableText("item.super_item.super_item.status3")), true);
+                player.setHealth(20);
+                player.getHungerManager().setFoodLevel(20);
+                player.sendMessage((new TranslatableText("item.super_item.super_item.status1")), true);
+            }
+
+            if(player.isSneaking() && enableNightVision)
+            {
+                StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 3600, 0, false, false);
+                {
+                    player.addStatusEffect(effect);
+                    player.sendMessage((new TranslatableText("item.super_item.super_item.status3")), true);
+                }
             }
         }
 
+
+
+//        if(enableHealthRestore && !world.isClient && inMainhand && !player.isSneaking())
+//        {
+//            player.setHealth(20);
+//            player.getHungerManager().setFoodLevel(20);
+//            player.sendMessage((new TranslatableText("item.super_item.super_item.status1")), true);
+//        }
+//
+//        if(enableHealthRestore && !world.isClient && inMainhand && player.isSneaking())
+//        {
+//            StatusEffectInstance effect = new StatusEffectInstance(StatusEffects.NIGHT_VISION, 3600, 0, false, false);
+//            {
+//                player.addStatusEffect(effect);
+//                player.sendMessage((new TranslatableText("item.super_item.super_item.status3")), true);
+//            }
+//        }
+
         // Offhand right-click opens Enderchest
         EnderChestInventory enderChest = player.getEnderChestInventory();
-        if(!world.isClient && inOffhand && !player.isSneaking() && enderChest != null)
+        if(enableEnderchest && !world.isClient && inOffhand && !player.isSneaking() && enderChest != null)
         {
-
             player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, playerInventory, playerEntity) -> {
                 return GenericContainerScreenHandler.createGeneric9x3(i, playerInventory, enderChest);
             }, TITLE));
-
         }
 
         // Offhand sneak + right-click full absorption
         if(!world.isClient && inOffhand && player.isSneaking())
         {
-            player.setHealth(20);
-            player.getHungerManager().setFoodLevel(20);
-            player.setAbsorptionAmount(60);
-            player.sendMessage((new TranslatableText("item.super_item.super_item.status2")), true);
+            if(enableHealthRestore)
+            {
+                player.setHealth(20);
+                player.getHungerManager().setFoodLevel(20);
+
+                if(enableAbsorptionHearts)
+                {
+                    player.setAbsorptionAmount(60);
+                }
+
+                player.sendMessage((new TranslatableText("item.super_item.super_item.status2")), true);
+            }
         }
 
         return TypedActionResult.success(mainHand);
@@ -129,7 +162,7 @@ public class ItemSuperItem extends Item
     {
         World world = context.getWorld();
 
-        if(!world.isClient)
+        if(enableTorchPlacing && !world.isClient)
         {
             BlockPos torchPos;
             BlockPos pos = context.getBlockPos();
